@@ -1,6 +1,5 @@
 import React from 'react';
 import { Answer } from './index'
-import '../assets/styles/style.css';
 
 const AnswersList = (props) => {
   return (
