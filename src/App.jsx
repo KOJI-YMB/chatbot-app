@@ -2,6 +2,7 @@ import React from 'react';
 import defaultDataset from './dataset';
 import { AnswersList, Chats } from './components';
 import FormDialog from './components/Forms/FormDialog';
+// import {db} from './firebase/index'
 import './assets/styles/style.css';
 
 export default class App extends React.Component {
@@ -70,6 +71,11 @@ export default class App extends React.Component {
 
   // 初回レンダー後に走る処理
   componentDidMount() {
+    // (async() => {
+    //   const dataset = this.state.dataset
+
+    //   db.collection('questions')
+    // })
     const initAnswer = "";
     this.selectAnswer(initAnswer, this.state.currentId)
   }
