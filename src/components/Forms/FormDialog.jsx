@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState, useCallback} from 'react'
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -7,38 +7,29 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import TextInput from './TextInput'
 
-export default class FormDialog extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state ={
-      name: "",
-      email: "",
-      description: ""
-    }
+const FormDialog = () => {
+    const [name, setName] =  useState("")
+    const [email, setEmail] = useState("")
+    const [description, setDescription] = useState("")
 
-    this.inputName = this.inputName.bind(this)
-    this.inputEmail = this.inputEmail.bind(this)
-    this.inputDescription = this.inputDescription.bind(this)
-  }
+  const inputName = useCallback((event) => {
+    setName(event.target.value)
+  }, [setName])
 
-  inputName = (event) => {
-    this.setState({name: event.target.value})
-  }
+  const inputEmail = useCallback((event) => {
+    setEmail(event.target.value)
+  }, [setEmail])
 
-  inputEmail = (event) => {
-    this.setState({email: event.target.value})
-  }
+  const inputDescription = useCallback((event) => {
+    setDescription(event.target.value)
+  }, [setDescription])
 
-  inputDescription = (event) => {
-    this.setState({description: event.target.value})
-  }
-
-  validateEmailFormat = (email) => {
+  const validateEmailFormat = (email) => {
     const regex = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
     return regex.test(email)
   }
 
-  validateRequiredInput = (...args) => {
+  const validateRequiredInput = (...args) => {
     let isBlank = false;
     for (let i = 0; i < args.length; i=(i+1)|0) {
         if (args[i] === "") {
@@ -48,13 +39,9 @@ export default class FormDialog extends React.Component {
     return isBlank
   };
 
-  submitForm =() => {
-    const name = this.state.name
-    const email = this.state.email
-    const description = this.state.description
-
-    const isBlank = this.validateRequiredInput(name, email, description)
-    const isValidEmail = this.validateEmailFormat(email)
+  const submitForm =() => {
+    const isBlank = validateRequiredInput(name, email, description)
+    const isValidEmail = validateEmailFormat(email)
 
     if (isBlank) {
       alert('必須入力欄が空白です。')
@@ -77,48 +64,44 @@ export default class FormDialog extends React.Component {
         body: JSON.stringify(payload)
       }).then(() => {
         alert('送信が完了しました。');
-        this.setState({
-          name: '',
-          email: '',
-          description: ''
-        })
-        return this.handleClose()
+        setName("")
+        setEmail("")
+        setDescription("")
+        return props.handleClose()
       })
     }
   };
-
-  render () {
-    return (
-      <Dialog
-      open={this.props.open}
-      onClose={this.props.handleClose}
+  return (
+    <Dialog
+      open={props.open}
+      onClose={props.handleClose}
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
-      <DialogTitle id="alert-dialog-title">
-        お問い合わせフォーム
-      </DialogTitle>
-      <DialogContent>
-        <DialogContentText id="alert-dialog-description">
-          <TextInput
-            label={"お名前(必須)"} multiline={false} rows={1}
-            value={this.state.name} type={"text"} onChange={this.inputName}
-          />
-          <TextInput
-            label={"メールアドレス(必須)"} multiline={false} rows={1}
-            value={this.state.email} type={"email"} onChange={this.inputEmail}
-          />
-          <TextInput
-            label={"お問い合わせ内容(必須)"} multiline={true} rows={5}
-            value={this.state.description} type={"text"} onChange={this.inputDescription}
-          />
-        </DialogContentText>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={this.props.handleClose}>キャンセル</Button>
-        <Button onClick={this.submitForm} autoFocus>送信する</Button>
-      </DialogActions>
-    </Dialog>
-    )
-  }
+    <DialogTitle id="alert-dialog-title">
+      お問い合わせフォーム
+    </DialogTitle>
+    <DialogContent>
+      <DialogContentText id="alert-dialog-description">
+        <TextInput
+          label={"お名前(必須)"} multiline={false} rows={1}
+          value={state.name} type={"text"} onChange={inputName}
+        />
+        <TextInput
+          label={"メールアドレス(必須)"} multiline={false} rows={1}
+          value={state.email} type={"email"} onChange={inputEmail}
+        />
+        <TextInput
+          label={"お問い合わせ内容(必須)"} multiline={true} rows={5}
+          value={state.description} type={"text"} onChange={inputDescription}
+        />
+      </DialogContentText>
+    </DialogContent>
+    <DialogActions>
+      <Button onClick={props.handleClose}>キャンセル</Button>
+      <Button onClick={submitForm} autoFocus>送信する</Button>
+    </DialogActions>
+  </Dialog>
+  )
 }
+export default FormDialog;
